@@ -1,0 +1,20 @@
+      SUBROUTINE WAV01(N,X,FUN)
+      IMPLICIT REAL*8(A-H,O-Z)
+      PARAMETER (NN=9)
+      DIMENSION HX(0:N)
+      PI=4.0D0*DATAN(1.0D0)
+      FAC=2.0D0*AIMQ01/(PI*HBAR)
+      IF(N.GE.0) THEN
+      HX(0)=1.0D0
+      ENDIF
+      IF(N.GE.1) THEN
+      HX(1)=2.0D0*X/SQRT(2.0D0)
+      ENDIF
+      IF(N.GE.2) THEN
+      DO 1 I=2,N
+      HX(I)=X*SQRT(2.0D0/DFLOAT(I))*HX(I-1)
+     1-SQRT(FLOAT(I-1)/FLOAT(I))*HX(I-2)
+   1  CONTINUE
+      ENDIF
+      RETURN
+      END
