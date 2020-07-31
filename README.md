@@ -1,12 +1,30 @@
-There's a lot of fortran code still used today that was written decades ago in fortran 77. Sometimes you don't want to mess with the legacy code base but if one realy wants to convert the old 77 fixed source code to modern free form source Fortran, the job becomes really tedious and annoying. This script aims to automate the process to produce Fortran 90 code from 77 one.
+There's a lot of fortran code still used today that was written decades ago in fortran 77. Sometimes you don't want to mess with the legacy code base but if one realy wants to convert the old 77 fixed source code to modern free form source Fortran, the job becomes really tedious and annoying. This script aims to automate the process to easily produce formatted free form code.
 
 
 ### How to use:
 Just run the python script with your FORTRAN 77 file name as argument
 ```bash
-python <file_name>.f
+python convert.py <file_name>.f
 ```
-It will output a file named `<file_name>.f90`. You can control the conversion by modifying the flags placed at the top of the python script. Check the example folder for some examples
+It will output a file named `<file_name>.f90`. All avilavle options,
+```
+>python convert.py -h
+usage: convert.py [-h] [-o PATH] [-maxcol MAXCOL] [-indent INDENT] [-numbereddo] [-keepblank] [-progstate] PATH
+
+Convert fixed source FORTRAN 77 code to indented modern free form Fortran 90 code
+
+positional arguments:
+  PATH            Name of the input file
+
+optional arguments:
+  -h, --help      show this help message and exit
+  -o PATH         Name of the output file
+  -maxcol MAXCOL  Maximum allowed column
+  -indent INDENT  Length of indentation of each labels
+  -numbereddo     Convert numbered do blocks
+  -keepblank      Keep blank lines
+  -progstate      Insert a `program` statement at the top
+```
 
 
 ### What it can do:
@@ -19,7 +37,7 @@ It will output a file named `<file_name>.f90`. You can control the conversion by
 7. Converts to lower case
 8. Replaces things like '.ge.', '.le.', '.gt', '.lt.' etc
 9. Removes return and stop before end statements
-10. Fixes openmp multiline directive
+10. Fixes OpenMP multiline directives
 
 
 ### What it can't do:
@@ -31,8 +49,8 @@ It will output a file named `<file_name>.f90`. You can control the conversion by
 
 
 ### Where it fails:
-The script removes numbered do loop and any label associated with it, so if a numbereddo loop shares its label with anyother goto or arithmatic if statements, this sctipt will break the code. If your script contains such cases you must turn off the numbered do loop check.
+The script removes numbered do loop and any label associated with it, so if a numbered do loop shares its label with any other goto or arithmatic if statements, the sctipt will break the code. If your script contains such cases you must diable the numbered do loop conversion.
 
 
 ### What's the catch:
-To make things easier this script convert evrything to lowercase.
+To make things easier the script converts evrything to lowercase. The script doesn't guarentee to covert any error. User must check the resulted code before running.

@@ -1,14 +1,25 @@
-import re,sys
+import re,sys,argparse
 
-fileName = './example/file1.f'#sys.argv[1]
-outFileName = fileName.replace('.f','.f90')
+parser = argparse.ArgumentParser(description='Convert fixed source FORTRAN 77 code to indented modern free form Fortran 90 code')
 
-MAXCOL = 120                # maximum column after which to wrap
-INDENT = 4                  # indentation for each code block
-CONVERT_NUMBERED_DO = True  # convert numbered do loop ?
-REMOVE_BLANK = True         # remove unwanted blank lines?
-PROGRAM_STATEMENT = True    # Inserts `program` statement at the beginning
+parser.add_argument('file',metavar='PATH',type=str,help='Name of the input file')
+parser.add_argument('-o',metavar='PATH',type=str,help='Name of the output file')
+parser.add_argument('-maxcol',metavar='MAXCOL',type=int,default=120,help='Maximum allowed column')
+parser.add_argument('-indent',metavar='INDENT',type=int,default=4,help='Length of indentation of each labels')
+parser.add_argument('-numbereddo',default=False,action='store_true',help='Convert numbered do blocks')
+parser.add_argument('-keepblank',default=False,action='store_true',help='Keep blank lines')
+parser.add_argument('-progstate',default=False,action='store_true',help='Insert a `program` statement at the top')
 
+
+args = parser.parse_args()
+
+fileName = args.file
+outFileName = args.o if args.o else fileName.replace('.f','.f90') 
+MAXCOL = args.maxcol                # maximum column after which to wrap
+INDENT = args.indent                  # indentation for each code block
+CONVERT_NUMBERED_DO = args.numbereddo  # convert numbered do loop ?
+REMOVE_BLANK = not args.keepblank         # remove unwanted blank lines?
+PROGRAM_STATEMENT = not args.progstate    # Inserts `program` statement at the beginning
 
 
 def splitIntoLines(txt,offset):
@@ -84,10 +95,8 @@ for i in range(len(code)-1,0,-1):
     
     m = re.search(  'write\([0-9* ]+,(\d+)\)',code[i]) # replace write formats
     if m:
-        print(code[i])
         form = formatGroups[ m.group(1)]
         code[i] = re.sub('write\(([0-9* ]+),(\d+)\)' , r'write(\1,"{}")'.format(form), code[i])
-        print(code[i])
 
 
     # remove return end before stop
@@ -150,6 +159,7 @@ for i in range(len(code)):
         currentIndent +=INDENT
 
     elif line.startswith('subroutine') or line.startswith('function') :
+        currentIndent = INDENT
         code[i] = '\n\n'+code[i].strip()
 
     elif line.startswith('program'):
@@ -165,9 +175,9 @@ txt = re.sub('\.eq\.', "==", txt)
 txt = re.sub('\.ne\.', "/=", txt)
 txt = re.sub('\.gt\.', ">", txt)
 txt = re.sub('\.lt\.', "<", txt)
-# txt = re.sub( '(\s+!)\s+', r'\1', txt)
 
 
 
 with open(outFileName, 'w') as f:
     f.write(txt)
+print('File saved as {}'.format(outFileName))
