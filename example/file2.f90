@@ -1,9 +1,8 @@
 program test
+    program test
     m=0
-    do i=1,10
-        do j=1,10
-            m=m+i+j
-        enddo
-    enddo
-    print *, m
-end
+    do 1 i=1,10
+        do 1 j=1,10
+            1 m=m+i+j
+            print *, m
+        end

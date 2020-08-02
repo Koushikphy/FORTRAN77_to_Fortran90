@@ -6,7 +6,7 @@ parser.add_argument('file',metavar='PATH',type=str,help='Name of the input file'
 parser.add_argument('-o',metavar='PATH',type=str,help='Name of the output file')
 parser.add_argument('-maxcol',metavar='MAXCOL',type=int,default=120,help='Maximum allowed column')
 parser.add_argument('-indent',metavar='INDENT',type=int,default=4,help='Length of indentation of each labels')
-parser.add_argument('-numbereddo',default=False,action='store_true',help='Convert numbered do blocks')
+parser.add_argument('-keepndo',default=False,action='store_true',help="Keep numbered do blocks")
 parser.add_argument('-keepblank',default=False,action='store_true',help='Keep blank lines')
 parser.add_argument('-progstate',default=False,action='store_true',help='Insert a `program` statement at the top')
 
@@ -17,7 +17,7 @@ fileName = args.file
 outFileName = args.o if args.o else fileName.replace('.f','.f90') 
 MAXCOL = args.maxcol                # maximum column after which to wrap
 INDENT = args.indent                  # indentation for each code block
-CONVERT_NUMBERED_DO = args.numbereddo  # convert numbered do loop ?
+CONVERT_NUMBERED_DO = not args.keepndo  # convert numbered do loop ?
 REMOVE_BLANK = not args.keepblank         # remove unwanted blank lines?
 PROGRAM_STATEMENT = not args.progstate    # Inserts `program` statement at the beginning
 
